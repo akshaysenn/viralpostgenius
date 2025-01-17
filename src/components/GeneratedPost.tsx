@@ -29,7 +29,10 @@ export const GeneratedPost = ({ content, viralityScore }: GeneratedPostProps) =>
       </div>
       <p className="text-muted-foreground whitespace-pre-wrap">{content}</p>
       <div className="space-y-2">
-        <p className="text-sm font-medium">Virality Score</p>
+        <div className="flex justify-between items-center">
+          <p className="text-sm font-medium">Virality Score</p>
+          <span className="text-sm font-medium">{viralityScore}%</span>
+        </div>
         <div className="w-full bg-secondary rounded-full h-2">
           <div
             className="bg-primary h-2 rounded-full transition-all duration-500"
