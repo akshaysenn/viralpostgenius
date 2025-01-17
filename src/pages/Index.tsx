@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { generatePost } from "@/utils/geminiApi";
+import { motion } from "framer-motion";
+import { useEffect, useState as useMouseState } from "react";
 
 const Index = () => {
   const [apiKey, setApiKey] = useState("");
@@ -16,6 +18,16 @@ const Index = () => {
   const [viralityScore, setViralityScore] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const [mousePosition, setMousePosition] = useMouseState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
 
   const handleGeneratePost = async () => {
     if (!apiKey || !topic) {
@@ -44,8 +56,28 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen p-6 flex items-center justify-center">
-      <div className="w-full max-w-2xl space-y-8">
+    <div className="min-h-screen p-6 flex items-center justify-center relative overflow-hidden">
+      {/* Mysterious gradient follower */}
+      <motion.div
+        className="fixed pointer-events-none opacity-30 blur-[100px]"
+        animate={{
+          x: mousePosition.x - 200,
+          y: mousePosition.y - 200,
+        }}
+        transition={{
+          type: "spring",
+          damping: 30,
+          stiffness: 200,
+        }}
+        style={{
+          width: "400px",
+          height: "400px",
+          background: "linear-gradient(225deg, #7E69AB 0%, #1A1F2C 100%)",
+          borderRadius: "50%",
+        }}
+      />
+
+      <div className="w-full max-w-2xl space-y-8 relative z-10">
         <div className="text-center space-y-2">
           <h1 className="text-4xl font-bold">AI Post Generator</h1>
           <p className="text-muted-foreground">
@@ -62,7 +94,7 @@ const Index = () => {
           </div>
           
           <Button
-            className="w-full"
+            className="w-full bg-gradient-to-r from-[#7E69AB] to-[#1A1F2C] hover:from-[#9b87f5] hover:to-[#403E43] transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg"
             onClick={handleGeneratePost}
             disabled={isLoading}
           >
