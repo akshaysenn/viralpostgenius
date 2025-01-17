@@ -6,6 +6,7 @@ import { GeneratedPost } from "@/components/GeneratedPost";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import { generatePost } from "@/utils/geminiApi";
 
 const Index = () => {
   const [apiKey, setApiKey] = useState("");
@@ -16,7 +17,7 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  const generatePost = async () => {
+  const handleGeneratePost = async () => {
     if (!apiKey || !topic) {
       toast({
         title: "Missing information",
@@ -28,17 +29,13 @@ const Index = () => {
 
     setIsLoading(true);
     try {
-      // In a real implementation, we would call the Gemini API here
-      // For now, we'll simulate a response
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      
-      const mockContent = `🚀 Exciting news! Just discovered an amazing way to boost productivity using AI tools.\n\n💡 Key takeaways:\n- Automate repetitive tasks\n- Focus on creative work\n- Scale your impact\n\nWho else is leveraging AI in their workflow? 🤔\n\n#ProductivityHacks #AI #Innovation`;
-      setGeneratedContent(mockContent);
-      setViralityScore(85);
+      const result = await generatePost(apiKey, { topic, platform });
+      setGeneratedContent(result.content);
+      setViralityScore(result.viralityScore);
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to generate post. Please try again.",
+        description: "Failed to generate post. Please check your API key and try again.",
         variant: "destructive",
       });
     } finally {
@@ -66,7 +63,7 @@ const Index = () => {
           
           <Button
             className="w-full"
-            onClick={generatePost}
+            onClick={handleGeneratePost}
             disabled={isLoading}
           >
             {isLoading ? (
