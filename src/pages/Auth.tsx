@@ -8,8 +8,8 @@ import { AuthError } from "@supabase/supabase-js";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [sent, setSent] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -26,19 +26,16 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithOtp({
+      const { error } = await supabase.auth.signInWithPassword({
         email,
-        options: {
-          emailRedirectTo: window.location.origin,
-        },
+        password,
       });
 
       if (error) throw error;
 
-      setSent(true);
       toast({
-        title: "Magic link sent!",
-        description: "Check your email for the login link",
+        title: "Login Successful!",
+        description: "You are now logged in.",
       });
     } catch (error) {
       const authError = error as AuthError;
@@ -67,45 +64,39 @@ const Auth = () => {
             Start Your Journey
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            Sign in securely with your email below
+            Sign in securely with your email and password below
           </p>
         </div>
 
-        {sent ? (
-          <div className="text-center space-y-4 fade-in">
-            <div className="text-lg font-medium">Check your email</div>
-            <p className="text-muted-foreground">
-              We've sent a magic link to {email}
-            </p>
-            <Button
-              variant="outline"
-              className="w-full hover:bg-purple-50 transition-colors"
-              onClick={() => setSent(false)}
-            >
-              Use a different email
-            </Button>
+        <form onSubmit={handleLogin} className="space-y-4 fade-in">
+          <div>
+            <Input
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full transition-all duration-300 hover:border-purple-400 focus:border-purple-500"
+            />
           </div>
-        ) : (
-          <form onSubmit={handleLogin} className="space-y-4 fade-in">
-            <div>
-              <Input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full transition-all duration-300 hover:border-purple-400 focus:border-purple-500"
-              />
-            </div>
-            <Button
-              type="submit"
-              className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-[1.02]"
-              disabled={loading}
-            >
-              {loading ? "Sending magic link..." : "Send magic link"}
-            </Button>
-          </form>
-        )}
+          <div>
+            <Input
+              type="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full transition-all duration-300 hover:border-purple-400 focus:border-purple-500"
+            />
+          </div>
+          <Button
+            type="submit"
+            className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-[1.02]"
+            disabled={loading}
+          >
+            {loading ? "Signing in..." : "Sign in"}
+          </Button>
+        </form>
       </div>
     </div>
   );
