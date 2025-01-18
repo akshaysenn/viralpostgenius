@@ -10,6 +10,7 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -21,20 +22,19 @@ const Auth = () => {
     });
   }, [navigate]);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      const { error } = isSignUp
+        ? await supabase.auth.signUp({ email, password })
+        : await supabase.auth.signInWithPassword({ email, password });
 
       if (error) throw error;
 
       toast({
-        title: "Login Successful!",
+        title: isSignUp ? "Sign Up Successful!" : "Login Successful!",
         description: "You are now logged in.",
       });
     } catch (error) {
@@ -61,14 +61,14 @@ const Auth = () => {
       <div className="w-full max-w-md space-y-8 bg-white/80 backdrop-blur-sm p-8 rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-[1.02] relative z-10">
         <div className="text-center">
           <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
-            Start Your Journey
+            {isSignUp ? "Create an Account" : "Sign In"}
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            Sign in securely with your email and password below
+            {isSignUp ? "Join us by creating an account below" : "Sign in securely with your email and password below"}
           </p>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-4 fade-in">
+        <form onSubmit={handleAuth} className="space-y-4 fade-in">
           <div>
             <Input
               type="email"
@@ -94,9 +94,20 @@ const Auth = () => {
             className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-[1.02]"
             disabled={loading}
           >
-            {loading ? "Signing in..." : "Sign in"}
+            {loading ? (isSignUp ? "Signing up..." : "Signing in...") : isSignUp ? "Sign Up" : "Sign In"}
           </Button>
         </form>
+        <div className="text-center mt-4">
+          <p className="text-sm">
+            {isSignUp ? "Already have an account?" : "Don't have an account?"} 
+            <button
+              className="text-purple-600 hover:underline ml-1"
+              onClick={() => setIsSignUp(!isSignUp)}
+            >
+              {isSignUp ? "Sign in" : "Sign up"}
+            </button>
+          </p>
+        </div>
       </div>
     </div>
   );
