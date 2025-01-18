@@ -5,10 +5,12 @@ import { PlatformSelector, type Platform } from "@/components/PlatformSelector";
 import { GeneratedPost } from "@/components/GeneratedPost";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2 } from "lucide-react";
+import { Loader2, LogOut } from "lucide-react";
 import { generatePost } from "@/utils/geminiApi";
 import { motion } from "framer-motion";
 import { useEffect, useState as useMouseState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
   const [apiKey, setApiKey] = useState("");
@@ -19,6 +21,7 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const [mousePosition, setMousePosition] = useMouseState({ x: 0, y: 0 });
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -28,6 +31,11 @@ const Index = () => {
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate("/auth");
+  };
 
   const handleGeneratePost = async () => {
     if (!apiKey || !topic) {
@@ -57,6 +65,16 @@ const Index = () => {
 
   return (
     <div className="min-h-screen p-6 flex items-center justify-center relative overflow-hidden">
+      {/* Logout button */}
+      <Button
+        variant="ghost"
+        size="icon"
+        className="absolute top-4 right-4"
+        onClick={handleLogout}
+      >
+        <LogOut className="h-5 w-5" />
+      </Button>
+
       {/* Mysterious gradient follower */}
       <motion.div
         className="fixed pointer-events-none opacity-30 blur-[100px]"
