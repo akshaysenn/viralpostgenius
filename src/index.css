@@ -50,3 +50,41 @@
     transform: translateY(0);
   }
 }
+
+/* Cloud animations */
+.cloud {
+  width: 150vh;
+  height: 150vh;
+  filter: blur(100px);
+  animation: float 20s infinite linear;
+  opacity: 0.5;
+}
+
+.cloud-1 {
+  top: -50%;
+  left: -50%;
+  animation-duration: 23s;
+}
+
+.cloud-2 {
+  top: 20%;
+  right: -30%;
+  animation-duration: 17s;
+  animation-delay: -7s;
+}
+
+.cloud-3 {
+  bottom: -40%;
+  left: 20%;
+  animation-duration: 21s;
+  animation-delay: -13s;
+}
+
+@keyframes float {
+  0% {
+    transform: rotate(0deg) translate(10px) rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg) translate(10px) rotate(-360deg);
+  }
+}
