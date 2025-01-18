@@ -4,7 +4,7 @@ interface GeneratePostParams {
 }
 
 export const generatePost = async (apiKey: string, { topic, platform }: GeneratePostParams) => {
-  const prompt = `Generate a highly engaging and viral ${platform} post about ${topic}. If a URL is provided, analyze its key points and summarize them in a compelling way. The tone should be attention-grabbing yet natural, using psychological triggers like curiosity, urgency, and relatability. Structure the post for readability, incorporating line breaks, trending emojis, and relevant hashtags. End with a strong call to action to boost engagement. Also, provide a virality score from 1 to 100 based on engagement potential.`;
+  const prompt = `Create a viral ${platform} post about ${topic}. Make it attention-grabbing and natural, using psychological triggers like curiosity and urgency. Include relevant emojis and hashtags.`;
 
   try {
     const response = await fetch(
